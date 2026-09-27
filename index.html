@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Price Estimator</title>
+    <style>
+        body { font-family: -apple-system, sans-serif; max-width: 600px; margin: 20px auto; padding: 20px; background: #f9f9f9; color: #333; }
+        nav { margin-bottom: 20px; background: #fff; padding: 10px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        nav a { margin-right: 15px; text-decoration: none; font-weight: bold; color: #2e7d32; }
+        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: 600; }
+        select, input[type="range"] { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 6px; }
+        .metric-container { display: flex; gap: 20px; margin-top: 20px; }
+        .metric { flex: 1; background: #f1f8e9; padding: 15px; border-radius: 8px; text-align: center; }
+        .metric h3 { margin: 0 0 5px 0; font-size: 14px; color: #555; }
+        .metric p { margin: 0; font-size: 24px; font-weight: bold; color: #2e7d32; }
+        .alert { padding: 15px; border-radius: 8px; margin-top: 15px; font-weight: bold; display: none; }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="index.html">🌾 Live Estimator</a>
+        <a href="trends.html">📈 Old Trends</a>
+        <a href="gap-analysis.html">🔍 Gap Analysis</a>
+    </nav>
+
+    <h1>Smart Price-Stability & Demand Estimator</h1>
+    <p style="color: #666;">Mobile interface optimized for local food vendors.</p>
+
+    <div class="card">
+        <h2>📍 Market Inputs</h2>
+        <div class="form-group">
+            <label for="commodity">Select Commodity</label>
+            <select id="commodity" onchange="calculatePrice()">
+                <option value="Tomatoes">Tomatoes</option>
+                <option value="Potatoes">Potatoes</option>
+                <option value="Onions">Onions</option>
+            </select>
+        </div>
+        
+        <h2>⚠️ Real-Time Risk Factors (Gap Analysis Resolution)</h2>
+        <div class="form-group">
+            <label id="weatherLabel" for="weather">Extreme Weather Risk: 20%</label>
+            <input type="range" id="weather" min="0" max="100" value="20" oninput="updateWeatherLabel(); calculatePrice();">
+        </div>
+        <div class="form-group">
+            <input type="checkbox" id="supplyShock" onchange="calculatePrice()">
+            <label style="display:inline; margin-left: 5px;" for="supplyShock">Reported Transit Delays / Storage Lockups</label>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>🔮 Next-Week Pricing Insights</h2>
+        <div class="metric-container">
+            <div class="metric">
+                <h3>Estimated Price</h3>
+                <p id="estPrice">\$34.80 / kg</p>
+            </div>
+            <div class="metric">
+                <h3>Historical Baseline</h3>
+                <p id="basePrice">\$30.00 / kg</p>
+            </div>
+        </div>
+        <div id="recommendationBox" class="alert"></div>
+    </div>
+
+    <script>
+        const basePrices = { "Tomatoes": 30.00, "Potatoes": 20.00, "Onions": 25.00 };
+
+        function updateWeatherLabel() {
+            document.getElementById('weatherLabel').innerText = `Extreme Weather Risk: ${document.getElementById('weather').value}%`;
+        }
+
+        function calculatePrice() {
+            const commodity = document.getElementById('commodity').value;
+            const weather = parseInt(document.getElementById('weather').value);
+            const supplyShock = document.getElementById('supplyShock').checked;
+            
+            // Core Machine Learning Trend baseline mimicking our Linear Regression logic
+            let baseline = basePrices[commodity] + 2.50; // Expected weekly drift factor
+            
+            // Fusing variables to address your Gap Analysis requirements
+            let weatherMultiplier = 1.0 + (weather / 250.0);
+            let supplyMultiplier = supplyShock ? 1.20 : 1.0;
+            
+            let finalPrice = (baseline * weatherMultiplier * supplyMultiplier).toFixed(2);
+            let historicalAvg = basePrices[commodity].toFixed(2);
+
+            document.getElementById('estPrice').innerText = `$${finalPrice} / kg`;
+            document.getElementById('basePrice').innerText = `$${historicalAvg} / kg`;
+
+            const alertBox = document.getElementById('recommendationBox');
+            alertBox.style.display = "block";
+
+            // Vendor action recommendation logic
+            if (finalPrice > historicalAvg * 1.12) {
+                alertBox.innerText = "🚨 High Risk Spikes: Avoid buying bulk right now. Prices are temporarily inflated by climate/logistical risks.";
+                alertBox.style.background = "#ffebee"; alertBox.style.color = "#c62828";
+            } else if (finalPrice < historicalAvg * 0.88) {
+                alertBox.innerText = "📈 High Stability Buy Signal: Prices are exceptionally low. Stock up safely without threat of sudden market crashes.";
+                alertBox.style.background = "#e8f5e9"; alertBox.style.color = "#2e7d32";
+            } else {
+                alertBox.innerText = "✅ Stable Market: Standard predictable pricing patterns. Maintain typical supply velocity.";
+                alertBox.style.background = "#e3f2fd"; alertBox.style.color = "#1565c0";
+            }
+        }
+        
+        // Initial Run
+        calculatePrice();
+    </script>
+</body>
+</html>

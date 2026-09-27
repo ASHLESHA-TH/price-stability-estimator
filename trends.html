@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historical Market Trends & Climate Prediction</title>
+    <script src="https://jsdelivr.net"></script>
+    <style>
+        body { font-family: -apple-system, sans-serif; max-width: 600px; margin: 20px auto; padding: 20px; background: #f9f9f9; color: #333; }
+        nav { margin-bottom: 20px; background: #fff; padding: 10px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        nav a { margin-right: 15px; text-decoration: none; font-weight: bold; color: #2e7d32; }
+        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        .prediction-box { background: #e8f5e9; border-left: 5px solid #2e7d32; padding: 15px; border-radius: 6px; margin-top: 15px; }
+        select { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 6px; margin-bottom: 15px; font-size: 15px; }
+        .badge { background: #2e7d32; color: white; padding: 4px 8px; border-radius: 12px; font-size: 12px; font-weight: bold; }
+        .badge.warning { background: #d32f2f; }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="index.html">🌾 Live Estimator</a>
+        <a href="trends.html">📈 Old Trends</a>
+        <a href="gap-analysis.html">🔍 Gap Analysis</a>
+    </nav>
+
+    <h1>Window 2: Old Trends & Climate Productivity Analytics</h1>
+    
+    <!-- Real-time Predictive Feature addressing User Intent & Gap Analysis -->
+    <div class="card">
+        <h2>🔮 Upcoming Climate Growth Prediction</h2>
+        <p style="font-size: 14px; color: #666;">Select the upcoming forecast season to see which crops are projected to thrive versus those highly vulnerable to climate shifts.</p>
+        
+        <label for="seasonSelect">Select Upcoming Climate Pattern:</label>
+        <select id="seasonSelect" onchange="updateClimatePrediction()">
+            <option value="drought">Deficient Monsoon / El Niño Heatwave (Current 2026 Core Trend)</option>
+            <option value="normal">Optimal Stable Rainfall Season</option>
+            <option value="excess">Unseasonal / Excess Rainfall Deluge</option>
+        </select>
+
+        <div class="prediction-box">
+            <h4>💡 Recommended Stocks (Will Grow Well):</h4>
+            <p id="thrivingCrops">Loading recommendations...</p>
+            
+            <h4>⚠️ High Vulnerability Stocks (Risk of Failure/Spikes):</h4>
+            <p id="vulnerableCrops">Loading risks...</p>
+        </div>
+    </div>
+
+    <!-- Historical Data Visualization Card -->
+    <div class="card">
+        <h2>📊 Multi-Month Historical Market Baseline</h2>
+        <canvas id="trendsChart"></canvas>
+    </div>
+
+    <script>
+        // Climate Insight Dictionary mapped to 2026 agricultural realities
+        const climateData = {
+            drought: {
+                thriving: "<span class='badge'>Millets (Sorghum/Bajra)</span> <span class='badge'>Pulses (Pigeon Pea)</span> <span class='badge'>Root Vegetables</span> <br><br><em>Why? These require significantly lower water and resist extreme heat waves.</em>",
+                vulnerable: "<span class='badge warning'>Paddy Rice</span> <span class='badge warning'>Tomatoes</span> <span class='badge warning'>Leafy Greens</span> <br><br><em>Why? High temperatures trigger flower drop in tomatoes and dry spells heavily stunt rice yield.</em>"
+            },
+            normal: {
+                thriving: "<span class='badge'>Wheat</span> <span class='badge'>Tomatoes</span> <span class='badge'>Potatoes</span> <span class='badge'>Rice</span> <br><br><em>Why? Uniform seasonal ranges support conventional high-yield crop rotations.</em>",
+                vulnerable: "None <br><br><em>Why? Standard stable environments present low localized crop decay rates.</em>"
+            },
+            excess: {
+                thriving: "<span class='badge'>Maize</span> <span class='badge'>Sugarcane</span> <span class='badge'>Ginger</span> <br><br><em>Why? Well-drained soils with sturdy stalk bases resist root waterlogging.</em>",
+                vulnerable: "<span class='badge warning'>Onions (Rot Risk)</span> <span class='badge warning'>Soybeans</span> <span class='badge warning'>Cotton</span> <br><br><em>Why? Excess soil moisture causes underground tuber rot and harvest ruins.</em>"
+            }
+        };
+
+        function updateClimatePrediction() {
+            const selectedSeason = document.getElementById('seasonSelect').value;
+            document.getElementById('thrivingCrops').innerHTML = climateData[selectedSeason].thriving;
+            document.getElementById('vulnerableCrops').innerHTML = climateData[selectedSeason].vulnerable;
+        }
+
+        // Initialize historical background line chart
+        const ctx = document.getElementById('trendsChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept'],
+                datasets: [{
+                    label: 'Old Price Benchmark Trends ($/kg)',
+                    data: [28.5, 29.2, 34.0, 31.8, 30.0, 35.5, 38.2, 36.0, 34.8],
+                    borderColor: '#2e7d32',
+                    backgroundColor: 'rgba(46, 125, 50, 0.1)',
+                    fill: true,
+                    tension: 0.2
+                }]
+            },
+            options: { responsive: true }
+        });
+
+        // Trigger on load
+        updateClimatePrediction();
+    </script>
+</body>
+</html>
